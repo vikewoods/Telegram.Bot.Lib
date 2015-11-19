@@ -3,9 +3,9 @@
 // This file is part of Telegram.Bot.Lib.
 // 
 // Project:  Telegram.Bot.Lib
-// File:        BotResponse.cs
+// File:        Audio.cs
 // User:      vikew
-// Date:      21:33 19/11/2015
+// Date:      22:56 19/11/2015
 // 
 // Telegram.Bot.Lib is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +23,19 @@
 
 using System.Runtime.Serialization;
 
-namespace Telegram.Bot.Lib
-{
-    [DataContract]
-    public class BotResponse<T>
-    {
-        [DataMember(Name = "ok")]
-        public bool Ok { get; set; }
 
-        [DataMember(Name = "result")]
-        public T Result { get; set; }
+namespace Telegram.Bot.Lib.Model
+{
+    [DataContract(Name = "Audio")]
+    public class Audio : MimeTypes
+    {
+        [DataMember(Name = "duration")]
+        public int Duration { get; set; }
+
+        [DataMember(Name = "performer", IsRequired = false, EmitDefaultValue = true)]
+        public string Performer { get; set; }
+
+        [DataMember(Name = "title", IsRequired = false, EmitDefaultValue = true)]
+        public string Title { get; set; }
     }
 }

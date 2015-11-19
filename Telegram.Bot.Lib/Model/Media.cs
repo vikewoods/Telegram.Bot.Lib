@@ -3,9 +3,9 @@
 // This file is part of Telegram.Bot.Lib.
 // 
 // Project:  Telegram.Bot.Lib
-// File:        BotResponse.cs
+// File:        Media.cs
 // User:      vikew
-// Date:      21:33 19/11/2015
+// Date:      22:59 19/11/2015
 // 
 // Telegram.Bot.Lib is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
 
 using System.Runtime.Serialization;
 
-namespace Telegram.Bot.Lib
-{
-    [DataContract]
-    public class BotResponse<T>
-    {
-        [DataMember(Name = "ok")]
-        public bool Ok { get; set; }
 
-        [DataMember(Name = "result")]
-        public T Result { get; set; }
+namespace Telegram.Bot.Lib.Model
+{
+    public abstract class Media
+    {
+        [DataMember(Name = "file_id")]
+        public string FileId { get; set; }
+
+        [DataMember(Name = "file_size", IsRequired = false, EmitDefaultValue = true)]
+        public int FileSize { get; set; }
     }
 }

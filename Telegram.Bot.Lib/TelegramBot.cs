@@ -23,12 +23,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
+using Newtonsoft.Json;
+using RestSharp.Deserializers;
 using Telegram.Bot.Lib.Model;
 
 namespace Telegram.Bot.Lib
@@ -102,5 +106,114 @@ namespace Telegram.Bot.Lib
         {
             return ExecuteGetRequestAsync<User>(new RestRequest(BuildRequest("getMe"), Method.GET));
         }
+
+        public async Task<List<Update>> GetUpdates(int offset = 0, int limit = 100, int timeout = 0)
+        {
+            var request = new RestRequest(BuildRequest("getUpdates"), Method.GET);
+
+            if (offset != 0)
+                request.AddQueryIntParameter("offset", offset);
+
+            if (limit != 0)
+                request.AddQueryIntParameter("limit", limit);
+
+            if (timeout != 100)
+                request.AddQueryIntParameter("timeout", timeout);
+
+            var uri = _restClient.BuildUri(request);
+            var sb = new StringBuilder();
+
+            // long-polling implementation
+            using (var client = new HttpClient())
+            {
+                client.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
+
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
+                using (var response = await client.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead))
+                {
+                    using (var body = await response.Content.ReadAsStreamAsync())
+                    using (var reader = new StreamReader(body))
+                        while (!reader.EndOfStream)
+                            sb.Append(reader.ReadLine());
+                }
+            }
+
+            var deserial = new JsonDeserializer();
+            var apiResponse = deserial.Deserialize<BotResponse<List<Update>>>(new RestResponse { Content = sb.ToString() });
+
+            return apiResponse.Result;
+        }
+
+        public Task<Message> SendMessage(int chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup)
+        {
+            var request = new RestRequest(BuildRequest("sendMessage"), Method.POST);
+
+            request.AddQueryIntParameter("chat_id", chatId);
+
+            if (disableWebPagePreview.HasValue)
+                request.AddQueryParameter("disable_web_page_preview", disableWebPagePreview.Value.ToString());
+
+            if (replyToMessageId.HasValue)
+                request.AddQueryIntParameter("reply_to_message_id", replyToMessageId.Value);
+
+            request.AddParameter("text", text);
+
+            if (replyMarkup != null)
+                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+
+            return ExecutePostRequestAsync<Message>(request);
+        }
+        public Task<Message> SendMessage(string chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup)
+        {
+            var request = new RestRequest(BuildRequest("sendMessage"), Method.POST);
+
+            request.AddQueryParameter("chat_id", chatId);
+
+            if (disableWebPagePreview.HasValue)
+                request.AddQueryParameter("disable_web_page_preview", disableWebPagePreview.Value.ToString());
+
+            if (replyToMessageId.HasValue)
+                request.AddQueryIntParameter("reply_to_message_id", replyToMessageId.Value);
+
+            request.AddParameter("text", text);
+
+            if (replyMarkup != null)
+                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+
+            return ExecutePostRequestAsync<Message>(request);
+        }
+
+        public Task<Message> ForwardMessage(int chatId, int fromChatId, int messageId)
+        {
+            var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
+
+            request.AddQueryIntParameter("chat_id", chatId);
+            request.AddQueryIntParameter("from_chat_id", fromChatId);
+            request.AddQueryIntParameter("message_id", messageId);
+
+            return ExecuteGetRequestAsync<Message>(request);
+        }
+        public Task<Message> ForwardMessage(string chatId, int fromChatId, int messageId)
+        {
+            var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
+
+            request.AddQueryParameter("chat_id", chatId);
+            request.AddQueryIntParameter("from_chat_id", fromChatId);
+            request.AddQueryIntParameter("message_id", messageId);
+
+            return ExecuteGetRequestAsync<Message>(request);
+        }
+        public Task<Message> ForwardMessage(string chatId, string fromChatId, int messageId)
+        {
+            var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
+
+            request.AddQueryParameter("chat_id", chatId);
+            request.AddQueryParameter("from_chat_id", fromChatId);
+            request.AddQueryIntParameter("message_id", messageId);
+
+            return ExecuteGetRequestAsync<Message>(request);
+        }
+
+
     }
 }
