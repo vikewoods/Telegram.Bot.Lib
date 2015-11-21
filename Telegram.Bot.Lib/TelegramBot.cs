@@ -122,7 +122,6 @@ namespace Telegram.Bot.Lib
             var uri = _restClient.BuildUri(request);
             var sb = new StringBuilder();
 
-            // long-polling implementation
             using (var client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);

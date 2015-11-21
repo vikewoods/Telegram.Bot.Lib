@@ -7,6 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Bot.Lib", "Telegra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram.Bot.Lib.Tests", "Telegram.Bot.Lib.Tests\Telegram.Bot.Lib.Tests.csproj", "{04380C70-CF44-4EDC-AFFB-0F365D3C3978}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Telegram.Bot.Web", "Telegram.Bot.Web\Telegram.Bot.Web.xproj", "{E7FAF22E-C3BA-46F1-A38C-94553DEF6E6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Telegram.Bot.Faq", "Telegram.Bot.Faq", "{71919046-10A0-451E-AC0A-3EB529B581E8}"
+	ProjectSection(SolutionItems) = preProject
+		Telegram.Bot.Faq\mkdocs.yml = Telegram.Bot.Faq\mkdocs.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{F0EFFC43-156E-4A2D-8997-D2940E129B9F}"
+	ProjectSection(SolutionItems) = preProject
+		Telegram.Bot.Faq\docs\index.md = Telegram.Bot.Faq\docs\index.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,8 +33,15 @@ Global
 		{04380C70-CF44-4EDC-AFFB-0F365D3C3978}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04380C70-CF44-4EDC-AFFB-0F365D3C3978}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04380C70-CF44-4EDC-AFFB-0F365D3C3978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7FAF22E-C3BA-46F1-A38C-94553DEF6E6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7FAF22E-C3BA-46F1-A38C-94553DEF6E6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7FAF22E-C3BA-46F1-A38C-94553DEF6E6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7FAF22E-C3BA-46F1-A38C-94553DEF6E6F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F0EFFC43-156E-4A2D-8997-D2940E129B9F} = {71919046-10A0-451E-AC0A-3EB529B581E8}
 	EndGlobalSection
 EndGlobal
