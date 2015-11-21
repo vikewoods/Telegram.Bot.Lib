@@ -24,7 +24,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RestSharp;
@@ -44,12 +43,12 @@ namespace Telegram.Bot.Lib
         private readonly RestClient _restClient;
 
         #region Telegram Bot Initialization
-        /// <exception cref="ArgumentNullException"><paramref name="token" /> is <see langword="null" />.</exception>
         public TelegramBot(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
-                throw new ArgumentNullException(nameof(token), "Token can't be blank!");
+                // ReSharper disable once ExceptionNotDocumented
+                throw new ArgumentNullException(nameof(token), "Telegram API throw an error! Token can't be blank!");
             }
 
             _token = token;
@@ -62,48 +61,53 @@ namespace Telegram.Bot.Lib
         #endregion
 
         #region Telegram Bot POST and GET requests async with RestSharp
-        private async Task<T> ExecutePostRequestAsync<T>(IRestRequest request)
+        private async Task<T> ExecPost<T>(IRestRequest request)
         {
             var result = await _restClient.ExecutePostTaskAsync<BotResponse<T>>(request).ConfigureAwait(false);
 
             if (result.ResponseStatus != ResponseStatus.Completed)
+                // ReSharper disable once ThrowingSystemException
                 throw new Exception("Response throw exception: " + result.ResponseStatus, result.ErrorException);
 
             if (result.StatusCode != HttpStatusCode.OK)
                 throw new HttpRequestException("Http request throw exception: " + result.StatusCode);
 
             if (!result.Data.Ok)
+                // ReSharper disable once ThrowingSystemException
                 throw new Exception("Telegram API throw an error!");
 
             return result.Data.Result;
         }
-        private async Task<T> ExecuteGetRequestAsync<T>(IRestRequest request)
+        private async Task<T> ExecGet<T>(IRestRequest request)
         {
             var result = await _restClient.ExecuteGetTaskAsync<BotResponse<T>>(request).ConfigureAwait(false);
 
             if (result.ResponseStatus != ResponseStatus.Completed)
+                // ReSharper disable once ThrowingSystemException
                 throw new Exception("Response throw exception: " + result.ResponseStatus, result.ErrorException);
 
             if (result.StatusCode != HttpStatusCode.OK)
                 throw new HttpRequestException("Http request throw exception: " + result.StatusCode);
 
             if (!result.Data.Ok)
+                // ReSharper disable once ThrowingSystemException
                 throw new Exception("Telegram API throw an error!");
 
             return result.Data.Result;
         }
-        protected static void ThrowOutOfRangeExceptionIfNotInRange(string param, int value, int @from, int to)
+        protected static void NotInRangeException(string param, int value, int @from, int to)
         {
             if ((value < @from) || (value > to))
-                throw new ArgumentOutOfRangeException(param,
-                    $"Argument must be in {@from} – {(to == int.MaxValue ? "∞" : to.ToString())} range");
+                // ReSharper disable once ExceptionNotDocumented
+                throw new ArgumentOutOfRangeException(param, $"Argument must be in {@from} – {(to == int.MaxValue ? "∞" : to.ToString())} range");
         }
         #endregion
 
-        
+        #region Telegram public api func.
+
         public Task<User> GetMe()
         {
-            return ExecuteGetRequestAsync<User>(new RestRequest(BuildRequest("getMe"), Method.GET));
+            return ExecGet<User>(new RestRequest(BuildRequest("getMe"), Method.GET));
         }
 
         public async Task<List<Update>> GetUpdates(int offset = 0, int limit = 100, int timeout = 0)
@@ -124,6 +128,7 @@ namespace Telegram.Bot.Lib
 
             using (var client = new HttpClient())
             {
+                // ReSharper disable once ExceptionNotDocumented
                 client.Timeout = TimeSpan.FromMilliseconds(Timeout.Infinite);
 
                 var requestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -142,76 +147,81 @@ namespace Telegram.Bot.Lib
             return apiResponse.Result;
         }
 
-        public Task<Message> SendMessage(int chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup)
+        public Task<Message> SendMessage(int chatid, string text, bool? webpageprev, int? replytomsg, ReplyMarkup replymarkup)
         {
             var request = new RestRequest(BuildRequest("sendMessage"), Method.POST);
 
-            request.AddQueryIntParameter("chat_id", chatId);
+            request.AddQueryIntParameter("chat_id", chatid);
 
-            if (disableWebPagePreview.HasValue)
-                request.AddQueryParameter("disable_web_page_preview", disableWebPagePreview.Value.ToString());
+            if (webpageprev.HasValue)
+                request.AddQueryParameter("disable_web_page_preview", webpageprev.Value.ToString());
 
-            if (replyToMessageId.HasValue)
-                request.AddQueryIntParameter("reply_to_message_id", replyToMessageId.Value);
+            if (replytomsg.HasValue)
+                request.AddQueryIntParameter("reply_to_message_id", replytomsg.Value);
 
             request.AddParameter("text", text);
 
-            if (replyMarkup != null)
-                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+            if (replymarkup != null)
+                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replymarkup));
 
-            return ExecutePostRequestAsync<Message>(request);
+            return ExecPost<Message>(request);
         }
-        public Task<Message> SendMessage(string chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup)
+        public Task<Message> SendMessage(string chatid, string text, bool? webpageprev, int? replytomsg, ReplyMarkup replymarkup)
         {
             var request = new RestRequest(BuildRequest("sendMessage"), Method.POST);
 
-            request.AddQueryParameter("chat_id", chatId);
+            request.AddQueryParameter("chat_id", chatid);
 
-            if (disableWebPagePreview.HasValue)
-                request.AddQueryParameter("disable_web_page_preview", disableWebPagePreview.Value.ToString());
+            if (webpageprev.HasValue)
+                request.AddQueryParameter("disable_web_page_preview", webpageprev.Value.ToString());
 
-            if (replyToMessageId.HasValue)
-                request.AddQueryIntParameter("reply_to_message_id", replyToMessageId.Value);
+            if (replytomsg.HasValue)
+                request.AddQueryIntParameter("reply_to_message_id", replytomsg.Value);
 
             request.AddParameter("text", text);
 
-            if (replyMarkup != null)
-                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replyMarkup));
+            if (replymarkup != null)
+                request.AddParameter("reply_markup", JsonConvert.SerializeObject(replymarkup));
 
-            return ExecutePostRequestAsync<Message>(request);
+            return ExecPost<Message>(request);
         }
 
-        public Task<Message> ForwardMessage(int chatId, int fromChatId, int messageId)
+        public Task<Message> ForwardMessage(int chatid, int fromchatid, int msgid)
         {
             var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
 
-            request.AddQueryIntParameter("chat_id", chatId);
-            request.AddQueryIntParameter("from_chat_id", fromChatId);
-            request.AddQueryIntParameter("message_id", messageId);
+            request.AddQueryIntParameter("chat_id", chatid);
+            request.AddQueryIntParameter("from_chat_id", fromchatid);
+            request.AddQueryIntParameter("message_id", msgid);
 
-            return ExecuteGetRequestAsync<Message>(request);
+            return ExecGet<Message>(request);
         }
-        public Task<Message> ForwardMessage(string chatId, int fromChatId, int messageId)
+        public Task<Message> ForwardMessage(string chatId, int fromchatid, int msgid)
         {
             var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
 
             request.AddQueryParameter("chat_id", chatId);
-            request.AddQueryIntParameter("from_chat_id", fromChatId);
-            request.AddQueryIntParameter("message_id", messageId);
+            request.AddQueryIntParameter("from_chat_id", fromchatid);
+            request.AddQueryIntParameter("message_id", msgid);
 
-            return ExecuteGetRequestAsync<Message>(request);
+            return ExecGet<Message>(request);
         }
-        public Task<Message> ForwardMessage(string chatId, string fromChatId, int messageId)
+        public Task<Message> ForwardMessage(string chatId, string fromChatId, int msgid)
         {
             var request = new RestRequest(BuildRequest("forwardMessage"), Method.GET);
 
             request.AddQueryParameter("chat_id", chatId);
             request.AddQueryParameter("from_chat_id", fromChatId);
-            request.AddQueryIntParameter("message_id", messageId);
+            request.AddQueryIntParameter("message_id", msgid);
 
-            return ExecuteGetRequestAsync<Message>(request);
+            return ExecGet<Message>(request);
         }
 
+        public Task<Message> SendPhoto()
+        {
+            return null;
+        }
 
+        #endregion
     }
 }

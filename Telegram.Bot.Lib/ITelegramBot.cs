@@ -55,26 +55,29 @@ namespace Telegram.Bot.Lib
         /// Use this method to send text messages. On success, the sent Message is returned.
         /// https://core.telegram.org/bots/api#sendmessage
         /// </summary>
-        /// <param name="chatId">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
+        /// <param name="chatid">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
         /// <param name="text">Text of the message to be sent</param>
-        /// <param name="disableWebPagePreview">Disables link previews for links in this message</param>
-        /// <param name="replyToMessageId">If the message is a reply, ID of the original message</param>
-        /// <param name="replyMarkup">Additional interface options. A JSON-serialized object for a custom reply keyboard, instructions to hide keyboard or to force a reply from the user.</param>
+        /// <param name="webpageprev">Disables link previews for links in this message</param>
+        /// <param name="replytomsg">If the message is a reply, ID of the original message</param>
+        /// <param name="replymarkup">Additional interface options. A JSON-serialized object for a custom reply keyboard, instructions to hide keyboard or to force a reply from the user.</param>
         /// <returns>The sent Message is returned.</returns>
-        Task<Message> SendMessage(int chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup);
-        Task<Message> SendMessage(string chatId, string text, bool? disableWebPagePreview, int? replyToMessageId, ReplyMarkup replyMarkup);
+        Task<Message> SendMessage(int chatid, string text, bool? webpageprev, int? replytomsg, ReplyMarkup replymarkup);
+        Task<Message> SendMessage(string chatid, string text, bool? webpageprev, int? replytomsg, ReplyMarkup replymarkup);
 
         /// <summary>
         /// Use this method to forward messages of any kind.
         /// https://core.telegram.org/bots/api#forwardmessage
         /// </summary>
-        /// <param name="chatId">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
-        /// <param name="fromChatId">Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)</param>
-        /// <param name="messageId">Unique message identifier</param>
+        /// <param name="chatid">Unique identifier for the target chat or username of the target channel (in the format @channelusername)</param>
+        /// <param name="fromchatid">Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername)</param>
+        /// <param name="msgid">Unique message identifier</param>
         /// <returns>The sent Message is returned.</returns>
-        Task<Message> ForwardMessage(int chatId, int fromChatId, int messageId);
-        Task<Message> ForwardMessage(string chatId, int fromChatId, int messageId);
-        Task<Message> ForwardMessage(string chatId, string fromChatId, int messageId);
+        Task<Message> ForwardMessage(int chatid, int fromchatid, int msgid);
+        Task<Message> ForwardMessage(string chatId, int fromchatid, int msgid);
+        Task<Message> ForwardMessage(string chatId, string fromChatId, int msgid);
+
+
+        Task<Message> SendPhoto();  
 
         /// <summary>
         /// Method used to build uri for request.
