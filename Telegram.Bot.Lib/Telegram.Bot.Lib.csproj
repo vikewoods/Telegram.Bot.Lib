@@ -53,7 +53,6 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ITelegramBot.cs" />
     <Compile Include="Model\Audio.cs" />
-    <Compile Include="Model\Contact.cs" />
     <Compile Include="Model\Document.cs" />
     <Compile Include="Model\GroupChat.cs" />
     <Compile Include="Model\Location.cs" />

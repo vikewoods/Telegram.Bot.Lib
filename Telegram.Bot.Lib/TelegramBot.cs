@@ -41,7 +41,6 @@ namespace Telegram.Bot.Lib
     {
         private readonly string _token;
         private const string BaseApiUrl = @"https://api.telegram.org/";
-        private const string ApiUrl = "https://api.telegram.org/bot{0}/{1}";
         private readonly RestClient _restClient;
 
         #region Telegram Bot Initialization
